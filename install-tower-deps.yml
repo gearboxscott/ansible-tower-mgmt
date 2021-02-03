@@ -1,0 +1,48 @@
+---
+- name: Install Tower Deps
+  hosts: tower
+  gather_facts: true
+
+  tasks: 
+        # Kerberos requirements:
+        # https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html#installing-the-kerberos-library
+        #
+    - name: Ensure connectivity to kerberos servers
+      wait_for:
+        port: "{{ kerberos_port }}"
+        host: "{{ kerberos_server }}"
+      tags: kerberos
+
+    - name: Push Windows Kerberos config file
+      template:
+        src: krb5.conf.j2
+        dest: /etc/krb5.conf
+      become: true
+      tags: kerberos
+
+    - name: Push Ansible config file
+      template:
+        src: ansible.cfg.j2
+        dest: /etc/ansible/ansible.cfg
+      become: true
+      tags: ansible-cfg
+
+    - name: Ensure kerberos packages installed
+      yum:
+        name:
+        - python-devel
+        - krb5-workstation
+        - krb5-devel
+        - krb5-libs
+      tags: kerberos 
+
+    - name: Install PIP Modules
+      pip:
+        name: '{{ item }}'
+        virtualenv: /var/lib/awx/venv/ansible
+      with_items:
+        - infoblox-client
+        - ansible-tower-cli
+        - 'ansible[azure]'
+        - mitogen
+

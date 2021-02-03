@@ -1,0 +1,28 @@
+# Configuration snippets may be placed in this directory as well
+includedir /etc/krb5.conf.d/
+
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ dns_lookup_realm = false
+ dns_lookup_kdc = false
+ ticket_lifetime = 24h
+ renew_lifetime = 7d
+ forwardable = true
+ #pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt
+ default_realm = {{ kerberos_server }}
+ #default_ccache_name = KEYRING:persistent:%{uid}
+
+[realms]
+ {{ kerberos_server }} = {
+  kdc = {{ kerberos_server | lower }}
+  admin_server = {{ kerberos_server | lower }}
+  default_domain = {{ kerberos_server | lower }}
+ }
+
+[domain_realm]
+ {{ kerberos_server | lower }} = {{ kerberos_server }}
+ {{ kerberos_server | lower }} = {{ kerberos_server }}

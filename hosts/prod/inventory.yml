@@ -1,0 +1,23 @@
+all:
+  children:
+    database:
+      hosts:
+        rhtowerpsql-001: {}
+    tower:
+      hosts:
+        rhtower-001: {}
+        rhtower-002: {}
+        rhtower-003: {}
+    ungrouped: {}
+  vars:
+    admin_password: !vault |
+          ... admin password in vault ...
+    ansible_become: 'true'
+    pg_database: awx
+    pg_host: rhtwrpsql-001
+    pg_password: !vault |
+          ... pgsql admin password in vault ...
+    pg_sslmode: prefer
+    pg_username: awx
+    kerberos_server: 'somedomain.com'
+    kerberos_port: 88

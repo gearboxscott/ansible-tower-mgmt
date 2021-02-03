@@ -1,0 +1,19 @@
+all:
+  children:
+    database:
+      hosts: {}
+    tower:
+      hosts:
+        lab-ansible-tower: {}
+    ungrouped: {}
+  vars:
+    admin_password: !vault |
+      ...  vault password for admin ...
+    ansible_become: "true"
+    pg_database: awx
+    pg_host: ""
+    pg_password: !vault |
+      ...  vault password for pg ...
+    pg_port: ""
+    pg_sslmode: prefer
+    pg_username: awx
